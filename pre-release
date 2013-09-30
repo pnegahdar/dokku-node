@@ -1,11 +1,12 @@
 #!/bin/bash
 APP="$1"; IMAGE="$2"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 set -e
 echo "-----> Injecting Node ..."
-NODE_VERSION=$(< "node_version")
+NODE_VERSION=$(< "$DIR/node_version")
 FILE_NAME="node-$NODE_VERSION-linux-x64"
 NODE_URL="http://nodejs.org/dist/$NODE_VERSION/$FILE_NAME.tar.gz"
-PACKAGES=$(cat packages | tr "\\n" " ")
+PACKAGES=$(cat "$DIR/packages" | tr "\\n" " ")
 COMMAND=$(cat <<EOF
 cd /tmp &&
 wget $NODE_URL &&
