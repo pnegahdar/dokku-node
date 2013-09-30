@@ -1,24 +1,25 @@
 #!/bin/bash
 APP="$1"; IMAGE="$2"
 set -e
-set -x
 echo "-----> Injecting Node ..."
 NODE_VERSION=$(< "node_version")
-FILE_NAME="node-$NODE_VERSION-linux-x64.tar.gz"
+FILE_NAME="node-$NODE_VERSION-linux-x64"
 NODE_URL="http://nodejs.org/dist/$NODE_VERSION/$FILE_NAME.tar.gz"
 PACKAGES=$(cat packages | tr "\\n" " ")
-COMMAND='cd /tmp
-wget $NODE_URL
-tar -xf $FILE_NAME.tar.gz
-rm -rf $FILE_NAME.tar.gz
-cd $FILE_NAME
-mv bin/* /usr/local/bin/
-mv share/* /usr/local/share/
-mv lib/* /usr/local/lib/
-npm install $PACKAGES
-'
-id=$(docker run -i -a stdin $IMAGE /bin/bash -c $COMMAND)
-docker attach $id
+COMMAND=$(cat <<EOF
+cd /tmp &&
+wget $NODE_URL &&
+tar -xf $FILE_NAME.tar.gz &&
+rm -rf $FILE_NAME.tar.gz &&
+cd $FILE_NAME &&
+cp -rf bin/* /usr/local/bin/ &&
+cp -rf share/* /usr/local/share/ &&
+cp -rf lib/* /usr/local/lib/ &&
+npm install -g $PACKAGES
+rm -rf /temp/$FILE_NAME
+EOF
+)
+id=$(docker run -d $IMAGE /bin/bash -c "$COMMAND")
 test $(docker wait $id) -eq 0
-TEST_NAME="$IMAGE_TEST"
-docker commit $id $TEST_NAME > /dev/null
+docker commit $id $IMAGE > /dev/null
+echo "-----> Injected Node with packages: $PACKAGES"

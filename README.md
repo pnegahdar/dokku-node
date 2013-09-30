@@ -6,6 +6,7 @@ available to compile files.
 
 ## Installation
 
+On your dokku server:
 ```sh
 git clone https://github.com/pnegahdar/dokku-node.git /var/lib/dokku/plugins/dokku-node
 dokku plugins-install
