@@ -1,5 +1,5 @@
 #!/bin/bash
-APP="$1"; IMAGE="$2"
+APP="$1"; IMAGE="app/$APP"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 set -e
 echo "-----> Injecting Node ..."
